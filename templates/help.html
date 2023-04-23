@@ -3,6 +3,13 @@
   <head>
     <title>Search Results</title>
     <style>
+      /* Set the background color and font-family for the body */
+      body {
+        background-color: #333;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+      
       /* Add styles for the search results */
       .search-results {
         margin: 20px auto;
@@ -11,6 +18,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        background-color: #333;
       }
       h2 {
         margin-top: 0;
@@ -26,7 +34,7 @@
         border-radius: 5px;
       }
       li:hover {
-        background-color: #f5f5f5;
+        background-color: #555;
       }
       a {
         text-decoration: none;
@@ -57,28 +65,24 @@
           <p>We used GPT to look at paper abstracts and identify pairs of entities (e.g., genes, molecules, compartments, basically anything) that 'act' on one another (e.g., enhances, interacts, affects, localizes to).</p>
 			<p></p>
 			<p>For example, given this abstract: </p>
-			<p>In plants, regulation of cellulose synthesis is fundamental for morphogenesis and plant growth. Cellulose is synthesized at the plasma membrane, and the orientation of synthesis is guided by cortical microtubules; however, the guiding mechanism is currently unknown. We show that the conditional root elongation pom2 mutants are impaired in cell elongation, fertility, and microtubule-related functions. Map-based cloning of the POM-POM2 locus revealed that it is allelic to CELLULOSE SYNTHASE INTERACTING1 (CSI1). Fluorescently tagged POM2/CSI1s associated with both plasma membrane-located cellulose synthases (CESAs) and post-Golgi CESA-containing compartments. Interestingly, while CESA insertions coincided with cortical microtubules in the pom2/csi1 mutants, the microtubule-defined movement of the CESAs was significantly reduced in the mutant. We propose that POM2/CSI1 provides a scaffold between the CESAs and cortical microtubules that guide cellulose synthesis.</p>
+			<p>Metabolic diseases often share common traits, including accumulation of unfolded proteins in the endoplasmic reticulum (ER). Upon ER stress, the unfolded protein response (UPR) is activated to limit cellular damage which weakens with age. Here, we show that Caenorhabditis elegans fed a bacterial diet supplemented high glucose at day 5 of adulthood (HGD-5) extends their lifespan, whereas exposed at day 1 (HGD-1) experience shortened longevity. We observed a metabolic shift only in HGD-1, while glucose and infertility synergistically prolonged the lifespan of HGD-5, independently of DAF-16. Notably, we identified that UPR stress sensors ATF-6 and PEK-1 contributed to the longevity of HGD-5 worms, while ire-1 ablation drastically increased HGD-1 lifespan. Together, we postulate that HGD activates the otherwise quiescent UPR in aged worms to overcome ageing-related stress and restore ER homeostasis. In contrast, young animals subjected to HGD provokes unresolved ER stress, conversely leading to a detrimental stress response.</p>
 			<p></p>
 			<p>GPT would return: </p>
-			<p>Cellulose: !synthesized at! Plasma Membrane </p>
-			<p>Cortical Microtubules: !guide! Cellulose Synthesis </p>
-			<p>POM2/CSI1: !associates with! CESAs </p>
-			<p>POM2/CSI1: !provides scaffold between! CESAs and Cortical Microtubules</p>		
+			<p>DAF-16: !localizes to! LIFESPAN OF HGD-5 WORMS</p>
+			<p>IRE-1: !represses! LIFESPAN OF HGD-1 WORMS</p>
+			<p>PEK-1: !enhances! LIFESPAN OF HGD-5 WORMS</p>
+			<p>ATF-6: !enhances! LIFESPAN OF HGD-5 WORMS</p>		
 		</li>
         <li>
           <p><strong>How can the database be searched?</strong></p>
-          <p>We only processed abstracts, so gene identifiers (e.g., AT4G32410) might not be caught by GPT. You should rather use gene symbols (CESA1), as these tend to be used in abstracts.</p>
-			<p>You can also search for other items that are mentioned in the abstracts, e.g., proline, cold, root hair, and so on.</p>
+          <p>We only processed abstracts, so gene identifiers (e.g., C41C4.4) might not be caught by GPT. You should rather use gene symbols (ire-1), as these tend to be used in abstracts.</p>
+			<p>You can also search for other items that are mentioned in the abstracts, e.g., dauer, autophagy, ER stress, longevity, starvation, and so on.</p>
 			<p>Additionally, you can search by author name or paper title.</p>
 		</li>
         <li>
           <p><strong>Which papers were analyzed?</strong></p>
-          <p>We based our journal selection by analyzing genes with experimentally verified function (source: TAIR).</p>
-		  <p>This allowed us to shortlist journals that typically contain functional information of plant genes.</p>
-			<p><img src="{{ url_for('static', filename='journals.png') }}" style="max-width: 100%;" alt="My Image"></p>
-		   <p>For journals not specific to plants (e.g., PNAS, Cell), we only processed papers discussing plants.</p>
-		   <p>Additionally, we only included papers published after 2004.</p>
-		</li>
+          <p>We analyzed and extracted insights from the entirety of abstracts featured in PubMed-indexed journals from 2004 to now with the general search keyword <em>C. elegans</em>.</p>
+		  					</li>
         <li>
           <p><strong>How to use the KnowledgeNetwork viewer?</strong></p>
           <p>The KnowledgeNetwork will show you all relationships found between your query and the entities detected by GPT.</p>
@@ -91,7 +95,7 @@
           <p><strong>Can I see the paper abstracts that revealed a given association?</strong></p>
           <p>Yes, below the KnowledgeNetwork, there is a table containing the network connections.</p>
 		  <p>Click on the pubmed ID, which will reveal the abstract and show you the entities that show the association.</p>
-		  <p>For example the CESA1 interacts with CESA3 association was found by the analysis of this abstract:</p>
+		  <p>For example the IRE-1 represses LIFESPAN OF HGD-1 WORMS association was found by the analysis of this abstract:</p>
 			<p><img src="{{ url_for('static', filename='abstractanalysis.png') }}" style="max-width: 100%;" alt="My Image"></p>
 		</li>
         <li>
