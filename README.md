@@ -1,2 +1,2 @@
-HumanConnectome
+CelegansConnectome
 # celegans
