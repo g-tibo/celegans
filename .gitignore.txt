@@ -1,0 +1,8 @@
+annotations/
+junk/
+data_collection/
+pickle_maker.py
+main.py
+GPT_surfer_by_journal.py
+GPT_surfer_by_pubmedID.py
+edges.txt
