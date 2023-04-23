@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CelegansConnectome</title>
+        <style>
+    /* Add global font style and dark mode background */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+  }
+            /* Add styles for the page header and footer */
+      header, footer {
+        background-color: #212121;
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+      }
+/* Style intro text class */
+.intro-container {
+  max-width: 1600px;
+  margin: 20px auto;
+  padding: 20px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.intro-text {
+  margin: 0;
+}
+
+
+/* Change form, stats, search-tips, and future divs to a dark background color */
+form, .stats, .search-tips, .future {
+    background-color: #1f1f1f;
+    color: #ffffff;
+      
+        margin: 20px auto;
+        max-width: 600px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+      input[type="text"], textarea {
+    background-color: #262626;
+    color: #ffffff;
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      input[type="submit"] {
+    background-color: #454545;
+    color: #ffffff;
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+      }
+	  
+      /* Add styles for the search tips */
+      .stats {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+      }
+      /* Add styles for the search tips */
+      .search-tips {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+      }
+
+      .search-tips h2 {
+        margin-top: 0;
+        font-size: 24px;
+      }
+      .future {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+      }
+	  .selected {
+		  background-color: red;
+		  cursor: move;
+		}
+		
+#piechart {
+  width: 600px;
+  height: 2000px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+}
+.chart-title {
+  text-align: center;
+}
+
+.help-button {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><em>C. eleagans </em>Connectome</h1>
+      <p>Welcome to the <strong><em>C. elegans</em> Connectome</strong>, your one-stop resource for discovering intricate relationships between genes, molecules, compartments, stresses, organs, and various other entities in the fascinating world of <em>C. elegans</em> biology. Our comprehensive database boasts an impressive collection of 131,891 entities and 31,740 meticulously analyzed publication abstracts. Dive into the vast expanse of knowledge by using our user-friendly search form below, and don't forget to consult our helpful stats and search tips for a smoother experience. Embark on your journey into the realm of <em>C. elegans</em> now!
+      </p>
+      <button class="help-button" onclick="window.location.href='/help'">Help</button>
+    </header>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function submitGeneForm(event) {
+    const titleInput = document.getElementById("gene_id");
+    if (titleInput.value === "") {
+      titleInput.value = titleInput.placeholder;
+    }
+  }
+
+  function submitNameForm(event) {
+    const titleInput = document.getElementById("author");
+    if (titleInput.value === "") {
+      titleInput.value = titleInput.placeholder;
+    }
+  }
+
+  function submitFormWith(event, value) {
+    event.preventDefault();
+    // Submit the form with the clicked value
+    const link = event.target;
+    const form = link.closest('form');
+    const input = form.querySelector('input[type="text"]');
+    input.value = value;
+    form.submit();
+  }
+  
+
+</script>
+
+<form action="/search" method="POST" onsubmit="submitGeneForm(event)" id="gene-form">
+  <label for="gene_id">Enter Gene ID/molecule/compartment</label>
+  <input type="text" id="gene_id" name="gene_id" placeholder="lgg-1">
+  <a href="#" onclick="submitFormWith(event, 'dauer')">dauer</a>
+  <a href="#" onclick="submitFormWith(event, 'autophagy')">autophagy</a>
+  <a href="#" onclick="submitFormWith(event, 'ER stress')">ER stress</a>
+  <a href="#" onclick="submitFormWith(event, 'longevity')">longevity</a>
+  <br>
+  <input type="submit" value="Search">
+</form>
+
+<form action="/author" method="POST" onsubmit="submitNameForm(event)" id="name-form">
+  <label for="author">Enter Author Name (without special characters)</label>
+  <input type="text" id="author" name="author" placeholder="John Doe">
+  <a href="#" onclick="submitFormWith(event, 'Guillaume Thibault')">Guillaume Thibault</a>
+  <br>
+  <input type="submit" value="Search">
+</form>
+	
+		
+
+	
+    <form action="/title" method="POST">
+      <label for="title">Enter paper title</label>
+      <input type="text" id="title" name="title" placeholder="​Stress sensor Ire1 deploys a divergent transcriptional program in response to lipid bilayer stress">
+      <input type="submit" value="Search">
+    </form>
+	
+	<div class="stats">
+	  <h2>Stats:</h2>
+      <ul>
+        <li>Number of genes/molecules/compartments and other entities: {{entities}}</li>
+		<li>Number of analyzed publication abstracts: {{papers}}</li>
+      </ul>
+    </div>
+	
+    <div class="search-tips">
+      <h2>Search Tips:</h2>
+      <ul>
+        <li>Search by gene/molecule/compartment/stress/organ or some other term</li>
+		<li>E.g., you could search for dauer, autophagy, ER stress, longevity, or starvation</li>
+		<li>The search engine is very primitive (for now), so 100% match is required</li>
+        <li>Use partial search terms to broaden your results (e.g. "him" instead of "him-14")</li>
+        <li>Try searching for related terms or synonyms</li>
+      </ul>
+    </div>
+	
+	<div class="future">
+	  <h2>Future:</h2>
+      <ul>
+        <li>Analyze and extract insights from the entirety of abstracts featured in PubMed-indexed journals</li>
+		<li>Date range: 2004-now</li>
+      </ul>
+    </div>
+	<div class="future">
+	  <img src="{{ url_for('static', filename='Capture.PNG') }}" alt="App Screenshot" style="max-width: 100%;">
+	</div>
+	<h2 class="chart-title">Processed journals and abstracts</h2>
+	<canvas id="piechart"></canvas>
+    <script>
+<h2 class="chart-title">Processed journals and abstracts</h2>
+<canvas id="piechart"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Define a color blind friendly color palette with 20 colors
+  var colorPalette = [
+    '#1F77B4', '#AEC7E8', '#FF7F0E', '#FFBB78', '#2CA02C', '#98DF8A',
+    '#D62728', '#FF9896', '#9467BD', '#C5B0D5', '#8C564B', '#C49C94',
+    '#E377C2', '#F7B6D2', '#7F7F7F', '#C7C7C7', '#BCBD22', '#DBDB8D',
+    '#17BECF', '#9EDAE5'
+  ];
+
+  var ctx = document.getElementById("piechart").getContext("2d");
+  var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['PloS one', 'Genetics', 'PLoS genetics', 'Proceedings of the National Academy of Sciences of the United States of America', 'Current biology : CB', 'Developmental biology', 'Scientific reports', 'Development (Cambridge, England)', 'The Journal of biological chemistry', 'eLife', 'Nature communications', 'Methods in molecular biology (Clifton, N.J.)', 'Developmental cell', 'Nucleic acids research', 'Nature', 'Molecular biology of the cell', 'G3 (Bethesda, Md.)', 'Cell', 'microPublication biology', 'The Journal of cell biology', 'Other'],
+      datasets: [
+        {
+          label: "Number of papers",
+          data: [979, 716, 685, 652, 626, 472, 458, 453, 450, 449, 367, 337, 326, 310, 296, 295, 290, 288, 284, 251, 19462],
+          backgroundColor: colorPalette,
+          borderColor: colorPalette,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      title: {
+        display: true,
+        text: "Processed journals and abstracts",
+        fontSize: 18,
+        position: "top",
+        padding: 0,
+      },
+      plugins: {
+  legend: {
+    labels: {
+      color: 'rgba(200, 200, 200, 1)', // Change this to the desired color
+    },
+  },
+},
+
+    },
+  });    </script>
+    <footer>
+      &copy; 2023 CelegansConnectome @labmutwil
+    </footer>
+  </body>
+</html>
