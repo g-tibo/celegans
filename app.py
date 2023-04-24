@@ -68,7 +68,7 @@ def make_text(elements):
         sorted_sentences = sorted(nodeSentenceDegree[i], key=lambda x: nodeSentenceDegree[i][x], reverse=True)
         tempSentences = []
         for j in sorted_sentences:
-            text = i+' '+j+' '
+            text = '<span  style="color: red;">'+i+'</span>'+' '+'<span  style="color: orange;">'+j+'</span>'+' '
             temp = {}
             tempRefs = []
             for k in topicDic[i][j]:
@@ -78,7 +78,7 @@ def make_text(elements):
                     temp[k[0]] += [pubmedLink %(k[1],k[1])]
             
             for target in temp:
-                tempRefs += [target + ' ('+', '.join(temp[target])+')']
+                tempRefs += [target + ' ('+', '.join(list(set(temp[target])))+')']
             tempSentences.append(text+', '.join(tempRefs))
 
         finishedSentence= '. '.join(tempSentences)+'.'
@@ -97,6 +97,15 @@ def find_terms(my_search, genes):
                         if j[0]!='' and j[2]!='':
                             forSending.append(Gene(j[0], j[2], j[1], j[3])) #source, target, type
                             elements.append({"source": j[0].replace("'","").replace('"',''), "target": j[2].replace("'","").replace('"',''), "interaction": j[1].replace("'","").replace('"','')})                
+            if '?' in my_search: #exact word
+                print(my_search.upper().strip().replace('?',''))
+                if my_search.upper().strip().replace('?','') in i.strip().split():
+                    for j in genes[i]:
+                        if j[0]!='' and j[2]!='':
+                            forSending.append(Gene(j[0], j[2], j[1], j[3])) #source, target, type
+                            elements.append({"source": j[0].replace("'","").replace('"',''), "target": j[2].replace("'","").replace('"',''), "interaction": j[1].replace("'","").replace('"','')})                
+
+            
             if my_search.upper().strip() in i.strip():
                 for j in genes[i]:
                     if j[0]!='' and j[2]!='':
@@ -128,24 +137,20 @@ def index():
 def author():
     try:
         my_search = request.form["author"].lower()
+        replacements = {"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss", "é": "e", "ô": "o", "î": "i", "ç": "c"}
+        my_search = ''.join(replacements.get(c, c) for c in my_search)
     except:
-        my_search=''
+        my_search =''
 
     if my_search!='':
-        with open('abstracts', 'rb') as f:
+        with open('authors', 'rb') as f:
             # Load the object from the file
             papers = pickle.load(f)
-            
+           
         hits = []
-        
-        for i in papers:
-            for author in i['authors']:
-            
-                replacements = {"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss", "é": "e", "ô": "o", "î": "i", "ç": "c"}
-                author = ''.join(replacements.get(c, c) for c in author)
-
-                if len(set(my_search.split())&set(author.lower().split()))==len(set(my_search.split())):
-                    hits.append(i['pmid'])
+        for author in papers:      
+            if len(set(my_search.split())&set(author.lower().split()))==len(set(my_search.split())):
+                hits+=papers[author]
                     
         # provide your email address to the Entrez API
         Entrez.email = "mutwil@gmail.com"
@@ -180,33 +185,35 @@ def author():
         elements = process_network(elements)
         cytoscape_js_code = generate_cytoscape_js(elements)
         warning = ''
+        summaryText = make_text(forSending)
+        
         if len(elements)>400:
             warning = 'The network might be too large to be displayed, so click on "Layout Options", select the edge types that you are interested in and click "Recalculate layout".'
 
-        return render_template('author.html', genes=forSending, cytoscape_js_code=cytoscape_js_code, ncbi_count=count, author= my_search, connectome_count=len(set(papers)), warning=warning)
+        return render_template('author.html', genes=forSending, cytoscape_js_code=cytoscape_js_code, ncbi_count=count, author= my_search, connectome_count=len(set(papers)), warning=warning, summaryText=summaryText)
     else:
         return render_template('not_found.html')
         
 @app.route('/title', methods=['POST'])
 def title():
-    try:
-        my_search = request.form['title'].lower()
-    except:
-        my_search=''
 
-    if my_search!='':
-        with open('abstracts', 'rb') as f:
+    my_search = request.form['title'].lower()
+    pmids = []
+    for i in my_search.split(';'):
+        pmids+=i.split()
+
+            
+    forSending = []
+    print(my_search)
+    if pmids!=[]:
+        
+        with open('titles', 'rb') as f:
             # Load the object from the file
             papers = pickle.load(f)
-            
-        hits = []
+
+        hits = list(set(pmids)&set(papers))
         
-        for i in papers:
-            if len(set(my_search.split())&set(i['title'].lower().split()))>len(set(my_search.split()))*0.8:
-                hits.append(i['pmid'])
-                break
         
-        forSending = []
         if hits!=[]:
             with open('allDic', 'rb') as file:
                 genes = pickle.load(file)
@@ -224,7 +231,8 @@ def title():
     if forSending!=[]:
         elements = process_network(elements)
         cytoscape_js_code = generate_cytoscape_js(elements)
-        return render_template('gene.html', genes=forSending, cytoscape_js_code=cytoscape_js_code)
+        summaryText = make_text(forSending)
+        return render_template('gene.html', genes=forSending, cytoscape_js_code=cytoscape_js_code, number_papers = len(hits), search_term = my_search, summaryText=summaryText)
     else:
         return render_template('not_found.html')
 
