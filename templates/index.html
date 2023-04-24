@@ -133,6 +133,26 @@ form, .stats, .search-tips, .future {
     border: none;
     cursor: pointer;
   }
+ /* style for lightbox */		
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.lightbox img {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  margin: 5% auto;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+		
     </style>
   </head>
   <body>
@@ -225,7 +245,7 @@ form, .stats, .search-tips, .future {
       </ul>
     </div>
 	<div class="future">
-	  <img src="{{ url_for('static', filename='Capture.png') }}" alt="App Screenshot" style="max-width: 100%;">
+  <img src="{{ url_for('static', filename='Capture.png') }}" alt="App Screenshot" style="max-width: 100%;" onclick="openLightbox(this)" />
 	</div>
 	<h2 class="chart-title">Processed journals and abstracts</h2>
 	<canvas id="piechart"></canvas>
@@ -274,9 +294,23 @@ form, .stats, .search-tips, .future {
 },
 
     },
-  });    </script>
+  });    
+function openLightbox(imgElement) {
+  const lightbox = document.querySelector('.lightbox');
+  const lightboxImg = lightbox.querySelector('img');
+  lightboxImg.src = imgElement.src;
+  lightboxImg.alt = imgElement.alt;
+  lightbox.style.display = 'block';
+}
+	  
+	</script>
     <footer>
   &copy; 2023 CelegansConnectome <a href="http://www.thibaultlab.com" target="_blank" rel="noopener">@ThibaultLab</a>
 </footer>
-  </body>
+  <div class="lightbox" onclick="this.style.display = 'none'">
+  <img src="{{ url_for('static', filename='Capture.png') }}" alt="App Screenshot" />
+</div>
+
+	  
+	</body>
 </html>
