@@ -189,13 +189,12 @@ form, .stats, .search-tips, .future {
   <br>
   <input type="submit" value="Search">
 </form>
-	
 		
-
-	
-    <form action="/title" method="POST">
-      <label for="title">Enter paper title</label>
-      <input type="text" id="title" name="title" placeholder="​Stress sensor Ire1 deploys a divergent transcriptional program in response to lipid bilayer stress">
+    <form action="/title" method="POST" onsubmit="submitTitleForm(event)" id="title-form">
+      <label for="title">Enter paper pubmed ID, separated by semicolon</label>
+      <input type="text" id="title" name="title" placeholder="26503768; 22294619">
+	  <a href="#" onclick="submitFormWith(event, '31408455; 36450261')">31408455; 36450261</a>
+	  <br>
       <input type="submit" value="Search">
     </form>
 	
